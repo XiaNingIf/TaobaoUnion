@@ -16,7 +16,6 @@ import com.jit.taobaounion.utils.LogUtils;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import kotlin.reflect.KVariance;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -54,9 +53,17 @@ public abstract class BaseFragment extends Fragment {
         loadStatesView(inflater,container);
         mBind = ButterKnife.bind(this, rootView);
         initView(rootView);
+        initListener();
         initPresenter();
         loadData();
         return rootView;
+    }
+
+    /**
+     * 如果子类需要去设置相关的监听事件，就可以覆盖父方法
+     */
+    protected void initListener(){
+
     }
 
     protected View loadRootView(LayoutInflater inflater, ViewGroup container) {
