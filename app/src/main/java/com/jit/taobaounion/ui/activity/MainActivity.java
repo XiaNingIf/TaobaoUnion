@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jit.taobaounion.R;
+import com.jit.taobaounion.base.BaseActivity;
 import com.jit.taobaounion.base.BaseFragment;
 import com.jit.taobaounion.ui.fragment.HomeFragment;
 import com.jit.taobaounion.ui.fragment.RedPacketFragment;
@@ -21,34 +22,36 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.main_navigation_bar)
     BottomNavigationView mNavigationView;
-    private String TAG = "MainActivity";
     private HomeFragment mHomeFragment;
     private RedPacketFragment mRedPacketFragment;
     private SelectedFragment mSelectedFragment;
     private SearchFragment mSearchFragment;
     private FragmentManager mFm;
-    private Unbinder mBind;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mBind = ButterKnife.bind(this);
-        initFragment();
+    protected void initPresenter() {
+
+    }
+
+    @Override
+    protected void initEvent() {
         initListener();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mBind != null) {
-            mBind.unbind();
-        }
+    protected void initView() {
+        initFragment();
     }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_main;
+    }
+
 
     private void initFragment() {
         mHomeFragment = new HomeFragment();
@@ -86,10 +89,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private BaseFragment lastOneFragment = null;
+
     private void switchFragment(BaseFragment targetFragment) {
+        //如果上一个fragment跟当前要切换的fragment是同一个，那么不需要切换
+        if(lastOneFragment == targetFragment) {
+            return;
+        }
+        //修改成add和hide的方式来控制fragment的切换
         FragmentTransaction fragmentTransaction = mFm.beginTransaction();
-        fragmentTransaction.replace(R.id.main_page_container,targetFragment);
+        if (!targetFragment.isAdded()) {
+            fragmentTransaction.add(R.id.main_page_container,targetFragment);
+        }else{
+            fragmentTransaction.show(targetFragment);
+        }
+        if (lastOneFragment != null) {
+            fragmentTransaction.hide(lastOneFragment);
+        }
+        lastOneFragment = targetFragment;
+        //fragmentTransaction.replace(R.id.main_page_container,targetFragment);
         fragmentTransaction.commit();
     }
-
 }

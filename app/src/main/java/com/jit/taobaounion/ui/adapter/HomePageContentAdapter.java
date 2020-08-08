@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.jit.taobaounion.R;
 import com.jit.taobaounion.model.domain.HomePagerContent;
-import com.jit.taobaounion.utils.LogUtils;
 import com.jit.taobaounion.utils.UrlUtils;
 
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import butterknife.ButterKnife;
 public class HomePageContentAdapter extends RecyclerView.Adapter<HomePageContentAdapter.InnerHolder> {
 
     List<HomePagerContent.DataBean> mData = new ArrayList<>();
+    private OnListItemClickListener mItemClickListener = null;
 
     @NonNull
     @Override
@@ -40,6 +40,15 @@ public class HomePageContentAdapter extends RecyclerView.Adapter<HomePageContent
         //LogUtils.d(this,"onBindViewHolder...."+position);
         HomePagerContent.DataBean dataBean = mData.get(position);
         holder.setData(dataBean);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mItemClickListener != null) {
+                    HomePagerContent.DataBean item = mData.get(position);
+                    mItemClickListener.onItemClick(item);
+                }
+            }
+        });
     }
 
     @Override
@@ -106,5 +115,13 @@ public class HomePageContentAdapter extends RecyclerView.Adapter<HomePageContent
             originalPriseTv.setText(String.format(context.getString(R.string.text_goods_original_prise),finalPrice));
             salesCountTv.setText(String.format(context.getString(R.string.text_sales_count),dataBean.getVolume()));
         }
+    }
+
+    public void setOnListItemClickListener(OnListItemClickListener listener){
+        this.mItemClickListener = listener;
+    }
+
+    public interface OnListItemClickListener{
+        void onItemClick(HomePagerContent.DataBean item);
     }
 }
