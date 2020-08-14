@@ -10,6 +10,8 @@ import com.jit.taobaounion.model.domain.Categories;
 import com.jit.taobaounion.ui.fragment.HomePagerFragment;
 import com.jit.taobaounion.utils.LogUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
         return categoryList.size();
     }
 
-    public void setCategories(Categories categories) {
+    public void setCategories(@NotNull Categories categories) {
         categoryList.clear();
         List<Categories.DataBean> data = categories.getData();
         categoryList.addAll(data);

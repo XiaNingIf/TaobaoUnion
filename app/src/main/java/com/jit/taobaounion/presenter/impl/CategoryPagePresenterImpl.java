@@ -10,6 +10,8 @@ import com.jit.taobaounion.utils.RetrofitManager;
 import com.jit.taobaounion.utils.UrlUtils;
 import com.jit.taobaounion.view.ICategoryPagerCallback;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,7 +85,7 @@ public class CategoryPagePresenterImpl implements ICategoryPagerPresenter {
         }
     }
 
-    private void handleHomePageContentResult(HomePagerContent pagerContent, int categoryId) {
+    private void handleHomePageContentResult(@NotNull HomePagerContent pagerContent, int categoryId) {
         //通知UI层更新数据
         List<HomePagerContent.DataBean> data = pagerContent.getData();
         for (ICategoryPagerCallback callback : callbacks) {

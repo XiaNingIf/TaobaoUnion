@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -32,11 +33,14 @@ import com.jit.taobaounion.utils.Constants;
 import com.jit.taobaounion.utils.LogUtils;
 import com.jit.taobaounion.utils.PresenterManager;
 import com.jit.taobaounion.utils.SizeUtils;
+import com.jit.taobaounion.utils.TicketUtil;
 import com.jit.taobaounion.utils.ToastUtil;
 import com.jit.taobaounion.view.ICategoryPagerCallback;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.lcodecore.tkrefreshlayout.views.TbNestedScrollView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -73,7 +77,8 @@ public class HomePagerFragment extends BaseFragment implements ICategoryPagerCal
     private HomePageContentAdapter mContentAdapter;
     private LooperPagerAdapter mLooperPagerAdapter;
 
-    public static HomePagerFragment newInstance(Categories.DataBean category){
+    @NotNull
+    public static HomePagerFragment newInstance(@NotNull Categories.DataBean category){
         HomePagerFragment homePagerFragment = new HomePagerFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.KEY_HOME_PAGER_TITLE,category.getTitle());
@@ -287,7 +292,7 @@ public class HomePagerFragment extends BaseFragment implements ICategoryPagerCal
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onLooperListLoaded(List<HomePagerContent.DataBean> contents) {
+    public void onLooperListLoaded(@NotNull List<HomePagerContent.DataBean> contents) {
         LogUtils.d(this,"looper size ---->" + contents.size());
         mLooperPagerAdapter.setData(contents);
         int dx = (Integer.MAX_VALUE / 2) % contents.size();
@@ -320,25 +325,18 @@ public class HomePagerFragment extends BaseFragment implements ICategoryPagerCal
     }
 
     @Override
-    public void onItemClick(HomePagerContent.DataBean item) {
+    public void onItemClick(@NotNull HomePagerContent.DataBean item) {
         //列表内容被点击了
         LogUtils.d(this,"item click---->" + item.getTitle());
         handleItemClick(item);
     }
 
-    private void handleItemClick(HomePagerContent.DataBean item) {
-        //处理数据
-        String title = item.getTitle();
-        String url = item.getClick_url();
-        String cover = item.getPict_url();
-        //拿到tickerPresenter去加载数据
-        ITicketPresenter ticketPresenter = PresenterManager.getInstance().getTicketPresenter();
-        ticketPresenter.getTicket(title,url,cover);
-        startActivity(new Intent(getContext(), TicketActivity.class));
+    private void handleItemClick(@NotNull HomePagerContent.DataBean item) {
+        TicketUtil.toTicketPage(getContext(),item);
     }
 
     @Override
-    public void onLooperItemClick(HomePagerContent.DataBean item) {
+    public void onLooperItemClick(@NotNull HomePagerContent.DataBean item) {
         //轮播图内容被点击了
         LogUtils.d(this,"item click---->" + item.getTitle());
         handleItemClick(item);

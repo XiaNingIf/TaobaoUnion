@@ -1,11 +1,9 @@
 package com.jit.taobaounion.ui.activity;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -13,21 +11,19 @@ import com.jit.taobaounion.R;
 import com.jit.taobaounion.base.BaseActivity;
 import com.jit.taobaounion.base.BaseFragment;
 import com.jit.taobaounion.ui.fragment.HomeFragment;
-import com.jit.taobaounion.ui.fragment.RedPacketFragment;
+import com.jit.taobaounion.ui.fragment.OnSellFragment;
 import com.jit.taobaounion.ui.fragment.SearchFragment;
 import com.jit.taobaounion.ui.fragment.SelectedFragment;
 import com.jit.taobaounion.utils.LogUtils;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 public class MainActivity extends BaseActivity {
 
     @BindView(R.id.main_navigation_bar)
     BottomNavigationView mNavigationView;
     private HomeFragment mHomeFragment;
-    private RedPacketFragment mRedPacketFragment;
+    private OnSellFragment mRedPacketFragment;
     private SelectedFragment mSelectedFragment;
     private SearchFragment mSearchFragment;
     private FragmentManager mFm;
@@ -55,7 +51,7 @@ public class MainActivity extends BaseActivity {
 
     private void initFragment() {
         mHomeFragment = new HomeFragment();
-        mRedPacketFragment = new RedPacketFragment();
+        mRedPacketFragment = new OnSellFragment();
         mSelectedFragment = new SelectedFragment();
         mSearchFragment = new SearchFragment();
         mFm = getSupportFragmentManager();

@@ -8,6 +8,8 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.jit.taobaounion.R;
 
+import org.jetbrains.annotations.NotNull;
+
 public class LoadingView extends AppCompatImageView {
     private float mDegree = 0;
     private boolean mNeedRotate = true;
@@ -63,7 +65,7 @@ public class LoadingView extends AppCompatImageView {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NotNull Canvas canvas) {
         canvas.rotate(mDegree,getWidth()/2,getHeight()/2);
         super.onDraw(canvas);
     }

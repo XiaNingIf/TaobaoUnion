@@ -1,5 +1,12 @@
 package com.jit.taobaounion.ui.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.Image;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,6 +22,7 @@ import com.jit.taobaounion.model.domain.TicketResult;
 import com.jit.taobaounion.presenter.ITicketPresenter;
 import com.jit.taobaounion.ui.custom.LoadingView;
 import com.jit.taobaounion.utils.PresenterManager;
+import com.jit.taobaounion.utils.ToastUtil;
 import com.jit.taobaounion.utils.UrlUtils;
 import com.jit.taobaounion.view.ITicketPagerCallback;
 
@@ -23,6 +31,8 @@ import butterknife.BindView;
 public class TicketActivity extends BaseActivity implements ITicketPagerCallback {
 
     private ITicketPresenter mTicketPresenter;
+
+    private boolean mHasTaobaoApp = false;
 
     @BindView(R.id.ticket_cover)
     ImageView mCover;
@@ -46,7 +56,19 @@ public class TicketActivity extends BaseActivity implements ITicketPagerCallback
     protected void initPresenter() {
         mTicketPresenter = PresenterManager.getInstance().getTicketPresenter();
         mTicketPresenter.registerViewCallback(this);
+        //判断是否已经安装淘宝
+        PackageManager pm = getPackageManager();
+        try {
+            PackageInfo packageInfo = pm.getPackageInfo("com.taobao.taobao", PackageManager.MATCH_UNINSTALLED_PACKAGES);
+            mHasTaobaoApp = packageInfo != null;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            mHasTaobaoApp = false;
+        }
+        //根据这个值去修改UI
+        mOpenOrCopyBtn.setText(mHasTaobaoApp?"打开淘宝领券":"复制淘口令");
     }
+
 
     @Override
     protected void release() {
@@ -66,6 +88,33 @@ public class TicketActivity extends BaseActivity implements ITicketPagerCallback
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        mOpenOrCopyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //复制淘口令
+                //拿到内容
+                String ticketCode = mTicketCode.getText().toString().trim();
+                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                //复制到粘贴表
+                ClipData clipData = ClipData.newPlainText("txy_taobao_ticket_code", ticketCode);
+                cm.setPrimaryClip(clipData);
+                //判断有没有淘宝
+                if (mHasTaobaoApp){
+                    //如果有就打开淘宝
+                    Intent taobaoIntent = new Intent();
+                    //taobaoIntent.setAction("android.intent.action.MAIN");
+                    //taobaoIntent.addCategory("android.intent.category.LAUNCHER");
+                    //com.taobao.taobao/com.taobao.tao.TBMainActivity
+                    ComponentName componentName = new ComponentName("com.taobao.taobao","com.taobao.tao.TBMainActivity");
+                    taobaoIntent.setComponent(componentName);
+                    startActivity(taobaoIntent);
+                    startActivity(taobaoIntent);
+                } else {
+                    //没有就提示复制成功
+                    ToastUtil.showToast("已经复制，粘贴分享，或打开淘宝");
+                }
             }
         });
     }

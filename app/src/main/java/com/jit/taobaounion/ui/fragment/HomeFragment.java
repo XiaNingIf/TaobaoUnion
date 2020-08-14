@@ -20,6 +20,8 @@ import com.jit.taobaounion.utils.LogUtils;
 import com.jit.taobaounion.utils.PresenterManager;
 import com.jit.taobaounion.view.IHomeCallback;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 
 public class HomeFragment extends BaseFragment implements IHomeCallback {
@@ -67,7 +69,7 @@ public class HomeFragment extends BaseFragment implements IHomeCallback {
     }
 
     @Override
-    protected View loadRootView(LayoutInflater inflater, ViewGroup container) {
+    protected View loadRootView(@NotNull LayoutInflater inflater, ViewGroup container) {
         return inflater.inflate(R.layout.base_home_fragment_layout,container,false);
     }
 

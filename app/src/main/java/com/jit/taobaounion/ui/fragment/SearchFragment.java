@@ -6,6 +6,7 @@ import com.jit.taobaounion.R;
 import com.jit.taobaounion.base.BaseFragment;
 
 public class SearchFragment extends BaseFragment {
+
     @Override
     protected int getRootViewResId() {
         return R.layout.fragment_search;
@@ -15,4 +16,5 @@ public class SearchFragment extends BaseFragment {
     protected void initView(View rootView) {
         setUpstate(State.SUCCESS);
     }
+
 }

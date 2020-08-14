@@ -16,6 +16,8 @@ import com.jit.taobaounion.R;
 import com.jit.taobaounion.model.domain.HomePagerContent;
 import com.jit.taobaounion.utils.UrlUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +96,7 @@ public class HomePageContentAdapter extends RecyclerView.Adapter<HomePageContent
             ButterKnife.bind(this,itemView);
         }
 
-        public void setData(HomePagerContent.DataBean dataBean) {
+        public void setData(@NotNull HomePagerContent.DataBean dataBean) {
             Context context = itemView.getContext();
             title.setText(dataBean.getTitle());
             ViewGroup.LayoutParams layoutParams = cover.getLayoutParams();
