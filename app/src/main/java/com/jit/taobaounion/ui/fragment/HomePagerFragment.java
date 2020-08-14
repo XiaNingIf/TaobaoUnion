@@ -1,10 +1,8 @@
 package com.jit.taobaounion.ui.fragment;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -21,12 +19,10 @@ import com.jit.taobaounion.R;
 import com.jit.taobaounion.base.BaseFragment;
 import com.jit.taobaounion.model.domain.Categories;
 import com.jit.taobaounion.model.domain.HomePagerContent;
+import com.jit.taobaounion.model.domain.IBaseInfo;
+import com.jit.taobaounion.model.domain.ILinearItemInfo;
 import com.jit.taobaounion.presenter.ICategoryPagerPresenter;
-import com.jit.taobaounion.presenter.ITicketPresenter;
-import com.jit.taobaounion.presenter.impl.CategoryPagePresenterImpl;
-import com.jit.taobaounion.presenter.impl.TicketPresenterImpl;
-import com.jit.taobaounion.ui.activity.TicketActivity;
-import com.jit.taobaounion.ui.adapter.HomePageContentAdapter;
+import com.jit.taobaounion.ui.adapter.LinearItemContentAdapter;
 import com.jit.taobaounion.ui.adapter.LooperPagerAdapter;
 import com.jit.taobaounion.ui.custom.AutoLoopViewPager;
 import com.jit.taobaounion.utils.Constants;
@@ -46,7 +42,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class HomePagerFragment extends BaseFragment implements ICategoryPagerCallback, HomePageContentAdapter.OnListItemClickListener, LooperPagerAdapter.OnLooperPageItemClickListener {
+public class HomePagerFragment extends BaseFragment implements ICategoryPagerCallback, LinearItemContentAdapter.OnListItemClickListener, LooperPagerAdapter.OnLooperPageItemClickListener {
 
     @BindView(R.id.home_pager_content_list)
     RecyclerView mContentList;
@@ -74,7 +70,7 @@ public class HomePagerFragment extends BaseFragment implements ICategoryPagerCal
 
     private ICategoryPagerPresenter mCategoryPagePresenter;
     private int mMaterialId;
-    private HomePageContentAdapter mContentAdapter;
+    private LinearItemContentAdapter mContentAdapter;
     private LooperPagerAdapter mLooperPagerAdapter;
 
     @NotNull
@@ -196,12 +192,12 @@ public class HomePagerFragment extends BaseFragment implements ICategoryPagerCal
         mContentList.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                outRect.top = 8;
-                outRect.bottom = 8;
+                outRect.top = SizeUtils.dip2px(getContext(),1.5f);
+                outRect.bottom = SizeUtils.dip2px(getContext(),1.5f);
             }
         });
         //创建适配器
-        mContentAdapter = new HomePageContentAdapter();
+        mContentAdapter = new LinearItemContentAdapter();
         //设置适配器
         mContentList.setAdapter(mContentAdapter);
 
@@ -325,13 +321,13 @@ public class HomePagerFragment extends BaseFragment implements ICategoryPagerCal
     }
 
     @Override
-    public void onItemClick(@NotNull HomePagerContent.DataBean item) {
+    public void onItemClick(@NotNull IBaseInfo item) {
         //列表内容被点击了
         LogUtils.d(this,"item click---->" + item.getTitle());
         handleItemClick(item);
     }
 
-    private void handleItemClick(@NotNull HomePagerContent.DataBean item) {
+    private void handleItemClick(@NotNull IBaseInfo item) {
         TicketUtil.toTicketPage(getContext(),item);
     }
 

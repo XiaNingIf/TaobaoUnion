@@ -44,14 +44,17 @@ public class SearchPresenterImpl implements ISearchPresenter {
     @Override
     public void getHistories() {
         Histories histories = mJsonCacheUtil.getValue(KEY_HISTORIES, Histories.class);
-        if ((mSearchViewCallback != null) && (histories != null) && (histories.getHistories() != null) && (histories.getHistories().size() != 0)){
-            mSearchViewCallback.onHistoriesLoaded(histories.getHistories());
+        if (mSearchViewCallback != null){
+            mSearchViewCallback.onHistoriesLoaded(histories);
         }
     }
 
     @Override
     public void deleteHistories() {
         mJsonCacheUtil.delCache(KEY_HISTORIES);
+        if (mSearchViewCallback != null) {
+            mSearchViewCallback.onHistoriesDeleted();
+        }
     }
 
     public final String  KEY_HISTORIES = "key_histories";
@@ -82,7 +85,7 @@ public class SearchPresenterImpl implements ISearchPresenter {
         //添加记录
         historiesList.add(history);
         //保存记录
-        mJsonCacheUtil.saveCache(KEY_HISTORIES,historiesList);
+        mJsonCacheUtil.saveCache(KEY_HISTORIES,histories);
     }
 
     @Override

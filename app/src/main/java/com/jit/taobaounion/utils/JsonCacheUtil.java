@@ -70,6 +70,6 @@ public class JsonCacheUtil {
         if (sJsonCacheUtil == null){
             sJsonCacheUtil = new JsonCacheUtil();
         }
-        return null;
+        return sJsonCacheUtil;
     }
 }
