@@ -18,7 +18,7 @@ import com.jit.taobaounion.utils.LogUtils;
 
 import butterknife.BindView;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements IMainActivity{
 
     @BindView(R.id.main_navigation_bar)
     BottomNavigationView mNavigationView;
@@ -31,6 +31,12 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initPresenter() {
 
+    }
+
+    public void switch2Search(){
+        //switchFragment(mSearchFragment);
+        //切换导航栏中的选项
+        mNavigationView.setSelectedItemId(R.id.search);
     }
 
     @Override

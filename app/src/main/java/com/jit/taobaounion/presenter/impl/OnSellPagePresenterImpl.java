@@ -39,7 +39,6 @@ public class OnSellPagePresenterImpl implements IOnSellPagePresenter {
             mOnSellPageCallback.onLoading();
         }
         //获取特惠内容
-        
         String targetUrl = UrlUtils.getOnSellPageUrl(mCurrentPage);
         Call<OnSellContent> task = mApi.getOnSellPageContent(targetUrl);
         task.enqueue(new Callback<OnSellContent>() {

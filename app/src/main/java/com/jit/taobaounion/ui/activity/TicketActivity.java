@@ -21,6 +21,7 @@ import com.jit.taobaounion.base.BaseActivity;
 import com.jit.taobaounion.model.domain.TicketResult;
 import com.jit.taobaounion.presenter.ITicketPresenter;
 import com.jit.taobaounion.ui.custom.LoadingView;
+import com.jit.taobaounion.utils.LogUtils;
 import com.jit.taobaounion.utils.PresenterManager;
 import com.jit.taobaounion.utils.ToastUtil;
 import com.jit.taobaounion.utils.UrlUtils;
@@ -126,27 +127,26 @@ public class TicketActivity extends BaseActivity implements ITicketPagerCallback
 
     @Override
     public void onTicketLoaded(String cover, TicketResult result) {
-        if (mLoadingView != null) {
-            mLoadingView.setVisibility(View.GONE);
-        }
-        if (retryLoadText != null) {
-            retryLoadText.setVisibility(View.GONE);
-        }
-        if (mCover != null && !TextUtils.isEmpty(cover)){
-        //ViewGroup.LayoutParams layoutParams = mCover.getLayoutParams();
-        //int width = layoutParams.width;
-        //int height = layoutParams.height;
-        //int targetSize = 400;
-        //if ((width>height?width:height)/2%10!=0){
-        //    targetSize = 400;
-        //}else{
-        //    targetSize = (width>height?width:height)/2;
-        //}
+        //设置图片封面
+        if(mCover != null && !TextUtils.isEmpty(cover)) {
+            ViewGroup.LayoutParams layoutParams = mCover.getLayoutParams();
+            int tagetWith = layoutParams.width / 2;
+            //LogUtils.d(this,"cover width -- > " + tagetWith);
             String coverPath = UrlUtils.getCoverPath(cover);
+            //LogUtils.d(this,"coverPath === > " + coverPath);
             Glide.with(this).load(coverPath).into(mCover);
         }
-        if (result != null && result.getData().getTbk_tpwd_create_response() != null){
+
+        if(TextUtils.isEmpty(cover)) {
+            mCover.setImageResource(R.mipmap.no_image);
+        }
+
+        //设置一下code
+        if(result != null && result.getData().getTbk_tpwd_create_response() != null) {
             mTicketCode.setText(result.getData().getTbk_tpwd_create_response().getData().getModel());
+        }
+        if(mLoadingView != null) {
+            mLoadingView.setVisibility(View.GONE);
         }
     }
 

@@ -78,6 +78,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="1000人已购买"
                 android:textColor="@color/colorGrey"
+                android:maxLines="1"
                 />
 
         </LinearLayout>

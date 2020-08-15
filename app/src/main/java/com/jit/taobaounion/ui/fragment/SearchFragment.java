@@ -1,7 +1,9 @@
 package com.jit.taobaounion.ui.fragment;
 
 import android.graphics.Rect;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.jit.taobaounion.model.domain.SearchResult;
 import com.jit.taobaounion.presenter.ISearchPresenter;
 import com.jit.taobaounion.ui.adapter.LinearItemContentAdapter;
 import com.jit.taobaounion.ui.custom.TextFlowLayout;
+import com.jit.taobaounion.utils.KeyboardUtil;
 import com.jit.taobaounion.utils.LogUtils;
 import com.jit.taobaounion.utils.PresenterManager;
 import com.jit.taobaounion.utils.SizeUtils;
@@ -36,12 +39,13 @@ import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 
-public class SearchFragment extends BaseFragment implements ISearchPageCallback {
+public class SearchFragment extends BaseFragment implements ISearchPageCallback, TextFlowLayout.OnFlowTextItemClickListener {
 
     @BindView(R.id.search_history_view)
     TextFlowLayout mHistoriesView;
@@ -111,6 +115,59 @@ public class SearchFragment extends BaseFragment implements ISearchPageCallback 
 
     @Override
     protected void initListener() {
+        mHistoriesView.setOnFlowTextItemClickListener(this);
+        mRecommendView.setOnFlowTextItemClickListener(this);
+        //发起搜索
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //如果有内容搜索
+                //如果没有内容取消
+                if (hasInput(false)) {
+                    //发起搜索
+                    if (mSearchPresenter != null) {
+                        //mSearchPresenter.doSearch(mSearchInputBox.getText().toString().trim());
+                        toSearch(mSearchInputBox.getText().toString().trim());
+                        KeyboardUtil.hide(getContext(),v);
+                    }
+                }else{
+                    KeyboardUtil.hide(getContext(),v);
+                }
+            }
+        });
+
+        //清除输入框里的内容
+        mCleanBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchInputBox.setText("");
+                //回到历史记录界面
+                switch2HistoryPage();
+            }
+        });
+
+        //监听输入框里的内容变化
+        mSearchInputBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //变化的时候的通知
+                //LogUtils.e(SearchFragment.this,"input text ===> " + s.toString().trim());
+                //如果长度不为零，那么显示删除按钮
+                //否则隐藏删除按钮
+                mCleanBtn.setVisibility(hasInput(true)?View.VISIBLE:View.GONE);
+                mSearchBtn.setText(hasInput(false)?"搜索":"取消");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         mSearchInputBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -121,7 +178,8 @@ public class SearchFragment extends BaseFragment implements ISearchPageCallback 
                         return false;
                     }else{
                         //发起搜索
-                        mSearchPresenter.doSearch(keyword);
+                        //mSearchPresenter.doSearch(keyword);
+                        toSearch(keyword);
                     }
                 }
                 return false;
@@ -155,6 +213,28 @@ public class SearchFragment extends BaseFragment implements ISearchPageCallback 
         });
     }
 
+    private void switch2HistoryPage() {
+        if (mSearchPresenter != null) {
+            mSearchPresenter.getHistories();
+        }
+        if (mRecommendView.getContentSize()!=0) {
+            mRecommendContainer.setVisibility(View.VISIBLE);
+        }else{
+            mRecommendContainer.setVisibility(View.GONE);
+        }
+
+        //内容隐藏
+        mRefreshContainer.setVisibility(View.GONE);
+    }
+
+    private boolean hasInput(boolean containSpace) {
+        if (containSpace){
+            return mSearchInputBox.getText().toString().length()>0;
+        }else{
+            return mSearchInputBox.getText().toString().trim().length()>0;
+        }
+    }
+
     @Override
     protected void initView(View rootView) {
         mSearchList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -163,11 +243,19 @@ public class SearchFragment extends BaseFragment implements ISearchPageCallback 
         mRefreshContainer.setEnableLoadmore(true);
         mRefreshContainer.setEnableRefresh(false);
         mRefreshContainer.setEnableOverScroll(true);
+        mSearchList.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                outRect.top = SizeUtils.dip2px(getContext(),1.5f);
+                outRect.bottom = SizeUtils.dip2px(getContext(),1.5f);
+            }
+        });
     }
 
     @Override
     public void onHistoriesLoaded(Histories histories) {
-        LogUtils.d(this,"histories---->" + histories);
+        setUpstate(State.SUCCESS);
+        //LogUtils.d(this,"histories---->" + histories);
         if (histories==null||histories.getHistories().size() == 0){
             mHistoriesContainer.setVisibility(View.GONE);
         }else{
@@ -199,13 +287,6 @@ public class SearchFragment extends BaseFragment implements ISearchPageCallback 
             //切换到搜索内容为空
             setUpstate(State.EMPTY);
         }
-        mSearchList.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                outRect.top = SizeUtils.dip2px(getContext(),1.5f);
-                outRect.bottom = SizeUtils.dip2px(getContext(),1.5f);
-            }
-        });
     }
 
     @Override
@@ -232,6 +313,7 @@ public class SearchFragment extends BaseFragment implements ISearchPageCallback 
 
     @Override
     public void onRecommendWordsLoaded(@NotNull List<SearchRecommend.DataBean> recommendWords) {
+        setUpstate(State.SUCCESS);
         //LogUtils.d(this,"recommendWords size----->" + recommendWords.size());
         List<String> recommendKeywords = new ArrayList<>();
         for (SearchRecommend.DataBean recommendWord : recommendWords) {
@@ -240,8 +322,8 @@ public class SearchFragment extends BaseFragment implements ISearchPageCallback 
         if (recommendWords==null || recommendWords.size()==0){
             mRecommendContainer.setVisibility(View.GONE);
         }else{
-            mRecommendContainer.setVisibility(View.VISIBLE);
             mRecommendView.setTextList(recommendKeywords);
+            mRecommendContainer.setVisibility(View.VISIBLE);
         }
     }
 
@@ -258,5 +340,22 @@ public class SearchFragment extends BaseFragment implements ISearchPageCallback 
     @Override
     public void onEmpty() {
         setUpstate(State.EMPTY);
+    }
+
+    @Override
+    public void onFlowItemClick(String text) {
+        //发起搜索
+        toSearch(text);
+    }
+
+    private void toSearch(String text) {
+        if (mSearchPresenter != null) {
+            mSearchList.scrollToPosition(0);
+            mSearchInputBox.setText(text);
+            mSearchInputBox.setFocusable(true);
+            mSearchInputBox.requestFocus();
+            mSearchInputBox.setSelection(text.length(),text.length());
+            mSearchPresenter.doSearch(text);
+        }
     }
 }

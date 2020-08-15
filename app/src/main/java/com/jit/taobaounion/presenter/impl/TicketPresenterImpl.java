@@ -31,7 +31,7 @@ public class TicketPresenterImpl implements ITicketPresenter {
     @Override
     public void getTicket(String title, String url, String cover) {
         //去获取淘口令
-        onTicketLoading();
+        this.onTicketLoading();
         this.mCover = cover;
         String targetUrl = UrlUtils.getTicketUrl(url);
         Retrofit retrofit = RetrofitManager.getInstance().getRetrofit();
@@ -82,6 +82,7 @@ public class TicketPresenterImpl implements ITicketPresenter {
 
     @Override
     public void registerViewCallback(ITicketPagerCallback callback) {
+        this.mViewCallback = callback;
         if (mCurrentState != LoadState.NONE){
             //说明状态已经改变
             //通知更新UI
@@ -93,7 +94,6 @@ public class TicketPresenterImpl implements ITicketPresenter {
                 onTicketLoading();
             }
         }
-        this.mViewCallback = callback;
     }
 
     private void onTicketLoading() {

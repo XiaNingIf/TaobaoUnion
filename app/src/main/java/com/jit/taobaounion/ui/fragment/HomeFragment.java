@@ -1,12 +1,16 @@
 package com.jit.taobaounion.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -15,10 +19,14 @@ import com.jit.taobaounion.base.BaseFragment;
 import com.jit.taobaounion.model.domain.Categories;
 import com.jit.taobaounion.presenter.IHomePresenter;
 import com.jit.taobaounion.presenter.impl.HomePresenterImpl;
+import com.jit.taobaounion.ui.activity.IMainActivity;
+import com.jit.taobaounion.ui.activity.MainActivity;
+import com.jit.taobaounion.ui.activity.ScanQrCodeActivity;
 import com.jit.taobaounion.ui.adapter.HomePagerAdapter;
 import com.jit.taobaounion.utils.LogUtils;
 import com.jit.taobaounion.utils.PresenterManager;
 import com.jit.taobaounion.view.IHomeCallback;
+import com.vondear.rxfeature.activity.ActivityScanerCode;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,9 +39,16 @@ public class HomeFragment extends BaseFragment implements IHomeCallback {
 
     private IHomePresenter mHomePresenter;
 
+    @BindView(R.id.home_search_input_box)
+    EditText mSearchInputBox;
+
     @BindView(R.id.home_pager)
     ViewPager homePager;
+
+    @BindView(R.id.scan_icon)
+    ImageView scanBtn;
     private HomePagerAdapter mHomePagerAdapter;
+
 
     @Override
     protected int getRootViewResId() {
@@ -62,10 +77,31 @@ public class HomeFragment extends BaseFragment implements IHomeCallback {
     }
 
     @Override
+    protected void initListener() {
+        scanBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //跳转到扫码界面
+                startActivity(new Intent(getContext(), ScanQrCodeActivity.class));
+            }
+        });
+    }
+
+    @Override
     protected void initPresenter() {
         //创建presenter
         mHomePresenter = PresenterManager.getInstance().getHomePresenter();
         mHomePresenter.registerViewCallback(this);
+        mSearchInputBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //跳转到搜索界面
+                FragmentActivity activity = getActivity();
+                if (activity instanceof IMainActivity){
+                    ((IMainActivity) activity).switch2Search();
+                }
+            }
+        });
     }
 
     @Override

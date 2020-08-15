@@ -90,7 +90,7 @@ public class SearchPresenterImpl implements ISearchPresenter {
 
     @Override
     public void doSearch(String keyword) {
-        if (mCurrentKeyword == null || !mCurrentKeyword.endsWith(keyword)) {
+        if (mCurrentKeyword == null || !mCurrentKeyword.equals(keyword)) {
             this.saveHistory(keyword);
             this.mCurrentKeyword = keyword;
         }
