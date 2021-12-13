@@ -133,7 +133,6 @@ public class TicketActivity extends BaseActivity implements ITicketPagerCallback
             int tagetWith = layoutParams.width / 2;
             //LogUtils.d(this,"cover width -- > " + tagetWith);
             String coverPath = UrlUtils.getCoverPath(cover);
-            //LogUtils.d(this,"coverPath === > " + coverPath);
             Glide.with(this).load(coverPath).into(mCover);
         }
 

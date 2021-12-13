@@ -1,5 +1,7 @@
 package com.jit.taobaounion.presenter.impl;
 
+import android.util.Log;
+
 import com.jit.taobaounion.model.Api;
 import com.jit.taobaounion.model.domain.SelectedContent;
 import com.jit.taobaounion.model.domain.SelectedPageCategory;

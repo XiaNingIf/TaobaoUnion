@@ -20,8 +20,8 @@
                 android:id="@+id/selected_cover"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:scaleType="centerCrop"
                 android:src="@mipmap/ic_launcher" />
+            <!--                android:scaleType="centerCrop"-->
 
             <TextView
                 android:id="@+id/selected_off_prise"

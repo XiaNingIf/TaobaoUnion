@@ -1,6 +1,8 @@
 package com.jit.taobaounion.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.jit.taobaounion.R;
 import com.jit.taobaounion.model.domain.SelectedContent;
 import com.jit.taobaounion.utils.Constants;
+import com.jit.taobaounion.utils.UrlUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +28,7 @@ import butterknife.ButterKnife;
 
 public class SelectedPageContentAdapter extends RecyclerView.Adapter<SelectedPageContentAdapter.InnerHolder> {
 
-    private List<SelectedContent.DataBean.TbkUatmFavoritesItemGetResponseBean.ResultsBean.UatmTbkItemBean> mData = new ArrayList<>();
+    private List<SelectedContent.DataBean.TbkDgOptimusMaterialResponseBean.ResultListBean.MapDataBean> mData = new ArrayList<>();
     private OnSelectedPageContentItemClickListener mContentItemClickListener = null;
 
     @NonNull
@@ -37,7 +40,7 @@ public class SelectedPageContentAdapter extends RecyclerView.Adapter<SelectedPag
 
     @Override
     public void onBindViewHolder(@NonNull InnerHolder holder, int position) {
-        SelectedContent.DataBean.TbkUatmFavoritesItemGetResponseBean.ResultsBean.UatmTbkItemBean itemData = mData.get(position);
+        SelectedContent.DataBean.TbkDgOptimusMaterialResponseBean.ResultListBean.MapDataBean itemData = mData.get(position);
         holder.setData(itemData);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +59,7 @@ public class SelectedPageContentAdapter extends RecyclerView.Adapter<SelectedPag
 
     public void setData(@NotNull SelectedContent content) {
         if (content.getCode() == Constants.SUCCESS_CODE){
-            List<SelectedContent.DataBean.TbkUatmFavoritesItemGetResponseBean.ResultsBean.UatmTbkItemBean> uatm_tbk_item = content.getData().getTbk_uatm_favorites_item_get_response().getResults().getUatm_tbk_item();
+            List<SelectedContent.DataBean.TbkDgOptimusMaterialResponseBean.ResultListBean.MapDataBean> uatm_tbk_item = content.getData().getTbk_dg_optimus_material_response().getResult_list().getMap_data();
             this.mData.clear();
             this.mData.addAll(uatm_tbk_item);
             notifyDataSetChanged();
@@ -85,10 +88,11 @@ public class SelectedPageContentAdapter extends RecyclerView.Adapter<SelectedPag
             ButterKnife.bind(this,itemView);
         }
 
-        public void setData(@NotNull SelectedContent.DataBean.TbkUatmFavoritesItemGetResponseBean.ResultsBean.UatmTbkItemBean itemData) {
+        public void setData(@NotNull SelectedContent.DataBean.TbkDgOptimusMaterialResponseBean.ResultListBean.MapDataBean itemData) {
             title.setText(itemData.getTitle());
             String pict_url = itemData.getPict_url();
-            Glide.with(itemView.getContext()).load(pict_url).into(cover);
+            String coverPath = UrlUtils.getCoverPath(pict_url);
+            Glide.with(itemView.getContext()).load(coverPath).into(cover);
             if (TextUtils.isEmpty(itemData.getCoupon_click_url())){
                 originalPriseTv.setText("晚啦，没有优惠券了");
                 buyBtn.setVisibility(View.GONE);
@@ -111,6 +115,6 @@ public class SelectedPageContentAdapter extends RecyclerView.Adapter<SelectedPag
     }
 
     public interface OnSelectedPageContentItemClickListener{
-        void onContentItemClick(SelectedContent.DataBean.TbkUatmFavoritesItemGetResponseBean.ResultsBean.UatmTbkItemBean item);
+        void onContentItemClick(SelectedContent.DataBean.TbkDgOptimusMaterialResponseBean.ResultListBean.MapDataBean item);
     }
 }

@@ -151,7 +151,7 @@ public class SelectedFragment extends BaseFragment implements ISelectedPageCallb
     }
 
     @Override
-    public void onContentItemClick(SelectedContent.DataBean.TbkUatmFavoritesItemGetResponseBean.ResultsBean.UatmTbkItemBean item) {
+    public void onContentItemClick(SelectedContent.DataBean.TbkDgOptimusMaterialResponseBean.ResultListBean.MapDataBean item) {
         TicketUtil.toTicketPage(getContext(),item);
     }
 }
